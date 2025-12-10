@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Specialare</title>
+
+    <style>
+        :root {
+            --blue: #2563eb;
+            --blue-dark: #1d4ed8;
+            --border: #d1d5db;
+            --bg: #f3f4f6;
+            --text: #0b2a3a;
+            --muted: #6b7280;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 1.5rem;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .lead {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: #fff;
+            padding: 1.5rem 1.75rem;
+            border-radius: 0.9rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.6rem;
+            height: 1.6rem;
+            border-radius: 999px;
+            background: var(--blue);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+
+        /* Programlistan */
+        .program-grid {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        .program-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.85rem;
+            padding: 1rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            box-shadow: 0 4px 8px rgba(15,23,42,0.04);
+        }
+
+        .program-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .program-desc {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin: 0.2rem 0 0.6rem;
+        }
+
+        .program-meta {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .primary-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            background: var(--blue);
+            text-decoration: none;
+            margin-top: auto;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+            transition: transform 0.05s ease, background 0.2s, box-shadow 0.2s;
+        }
+
+        .primary-link:hover {
+            background: var(--blue-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 7px 16px rgba(37,99,235,0.45);
+        }
+
+        @media (max-width: 640px) {
+            .card {
+                padding: 1.2rem 1.1rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="page">
+
+        <h1>Specialare</h1>
+        <p class="lead">Verktyg, experiment och småprojekt alla samlade på ett ställe.</p>
+
+        <section class="card">
+            <h2><span class="badge">1</span> </h2>
+
+            <div class="program-grid">
+
+                <!-- PROGRAM 1 -->
+                <article class="program-card">
+                    <h3 class="program-title">WalletFixer</h3>
+                    <p class="program-desc">
+                        Skapa automatiska Wallet-ikoner och loggor i rätt storlekar tillsammans med förhandsvisningar.
+                    </p>
+                    <p class="program-meta"></p>
+                    <a class="primary-link" href="https://liilep.github.io/WalletFixer/" target="_blank">Öppna</a>
+                </article>
+
+                <!-- PROGRAM 2 -->
+                <article class="program-card">
+                    <h3 class="program-title">QR Kupongs-Generatorn</h3>
+                    <p class="program-desc">
+                        Genererar kuponger med QR-koder – perfekt för test, demo och interna flöden.
+                    </p>
+                    <p class="program-meta"></p>
+                    <a class="primary-link" href="https://liilep.github.io/QR-Kupongs-Reneratorn/" target="_blank">Öppna</a>
+                </article>
+
+                <!-- PROGRAM 3 -->
+                <article class="program-card">
+                    <h3 class="program-title">QR Kupongs-Generatorn</h3>
+                    <p class="program-desc">
+                        Genererar bilder för PDF-biljett i rätt storlekar.
+                    </p>
+                    <p class="program-meta"></p>
+                    <a class="primary-link" href="https://liilep.github.io/PDF-Biljettbilder/" target="_blank">Öppna</a>
+                </article>
+
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
