@@ -272,6 +272,11 @@
             transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
         }
 
+        .program-card.micke-card {
+            overflow: visible;
+            z-index: 3;
+        }
+
         .program-card:hover {
             transform: translateY(-4px);
             border-color: rgba(37, 99, 235, 0.32);
@@ -290,6 +295,84 @@
 
         .program-card:hover::before {
             opacity: 1;
+        }
+
+        .hover-bubble {
+            position: absolute;
+            right: -1.1rem;
+            top: -2rem;
+            width: 156px;
+            height: 128px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.7rem;
+            border-radius: 52% 48% 45% 55% / 50% 44% 56% 50%;
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            box-shadow: 0 18px 28px rgba(15, 23, 42, 0.16);
+            opacity: 0;
+            transform: translateY(8px) scale(0.88);
+            transform-origin: top right;
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+            z-index: 2;
+        }
+
+        .hover-bubble::before,
+        .hover-bubble::after {
+            content: "";
+            position: absolute;
+            background: rgba(255, 255, 255, 0.97);
+            border: 1px solid rgba(148, 163, 184, 0.28);
+            border-radius: 999px;
+        }
+
+        .hover-bubble::before {
+            width: 28px;
+            height: 28px;
+            right: 28px;
+            bottom: -14px;
+        }
+
+        .hover-bubble::after {
+            width: 16px;
+            height: 16px;
+            right: 14px;
+            bottom: -24px;
+        }
+
+        .hover-bubble-photo {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 44% 56% 48% 52% / 52% 46% 54% 48%;
+        }
+
+        .hover-bubble-photo::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at center, rgba(255, 255, 255, 0) 42%, rgba(255, 255, 255, 0.18) 68%, rgba(255, 255, 255, 0.62) 100%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+            box-shadow: inset 0 0 26px rgba(255, 255, 255, 0.5);
+        }
+
+        .hover-bubble-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 18%;
+            filter: saturate(1.02) brightness(1.03);
+            transform: scale(1.04);
+        }
+
+        .program-card.micke-card:hover .hover-bubble,
+        .program-card.micke-card:focus-within .hover-bubble {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .program-top {
@@ -583,7 +666,12 @@
                 </article>
 
                 <!-- PROGRAM 7 -->
-                <article class="program-card" data-search="micke venue maker layouteditor ticksternätet intern">
+                <article class="program-card micke-card" data-search="micke venue maker layouteditor ticksternätet intern">
+                    <div class="hover-bubble" aria-hidden="true">
+                        <div class="hover-bubble-photo">
+                            <img class="hover-bubble-image" src="img/micke-hover.jpg" alt="">
+                        </div>
+                    </div>
                     <div class="program-top">
                         <img class="program-thumb" src="img/Logo_ikon.png" alt="Micke's Venue Maker ikon">
                         <span class="status-tag internal"><span class="status-dot"></span> Internt</span>
@@ -625,7 +713,12 @@
                 </article>
 
                 <!-- PROGRAM 10 -->
-                <article class="program-card" data-search="Micke's Import Converter">
+                <article class="program-card micke-card" data-search="Micke's Import Converter">
+                    <div class="hover-bubble" aria-hidden="true">
+                        <div class="hover-bubble-photo">
+                            <img class="hover-bubble-image" src="img/micke-hover.jpg" alt="">
+                        </div>
+                    </div>
                     <div class="program-top">
                         <img class="program-thumb" src="img/importconverter.png" alt="Importconverter ikon">
                         <span class="status-tag internal"><span class="status-dot"></span> Internt</span>
@@ -677,12 +770,14 @@
 
     <script>
         const uiSound = new Audio('Spick.m4a');
+        const openClickSound = new Audio('Bonk_trimmed.m4a');
         const clickCountStorageKey = 'specialare.programClickCounts.v1';
         const uiSoundCooldownMs = 250;
         let uiSoundLastPlayedAt = 0;
         const searchInput = document.getElementById('searchInput');
         const cards = Array.from(document.querySelectorAll('.program-card'));
         const emptyState = document.getElementById('emptyState');
+        const programLinks = Array.from(document.querySelectorAll('.primary-link'));
         const soundTriggers = cards.filter((card) => {
             const link = card.querySelector('.primary-link');
             const href = link ? link.getAttribute('href') : '';
@@ -692,6 +787,7 @@
         const clickCounts = loadClickCounts();
 
         uiSound.preload = 'auto';
+        openClickSound.preload = 'auto';
         initializeClickCounters();
 
         searchInput.addEventListener('input', () => {
@@ -719,6 +815,16 @@
             uiSound.currentTime = 0;
 
             const playAttempt = uiSound.play();
+            if (playAttempt && typeof playAttempt.catch === 'function') {
+                playAttempt.catch(() => {});
+            }
+        }
+
+        function playOpenClickSound() {
+            openClickSound.pause();
+            openClickSound.currentTime = 0;
+
+            const playAttempt = openClickSound.play();
             if (playAttempt && typeof playAttempt.catch === 'function') {
                 playAttempt.catch(() => {});
             }
@@ -781,12 +887,20 @@
             });
         }
 
-        soundTriggers.forEach((trigger) => {
-            trigger.addEventListener('mouseenter', () => {
-                playUiSound(true);
+        programLinks.forEach((link) => {
+            link.addEventListener('pointerdown', () => {
+                playOpenClickSound();
             });
 
-            trigger.addEventListener('focusin', () => {
+            link.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    playOpenClickSound();
+                }
+            });
+        });
+
+        soundTriggers.forEach((trigger) => {
+            trigger.addEventListener('mouseenter', () => {
                 playUiSound(true);
             });
         });
