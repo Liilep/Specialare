@@ -683,9 +683,12 @@
         const searchInput = document.getElementById('searchInput');
         const cards = Array.from(document.querySelectorAll('.program-card'));
         const emptyState = document.getElementById('emptyState');
-        const soundTriggers = Array.from(document.querySelectorAll(
-            'a[href="http://sys-sf-nm1.arvika.xnse.com:8080/"], a[href="http://sys-sf-nm1.arvika.xnse.com:8123/"]'
-        ));
+        const soundTriggers = cards.filter((card) => {
+            const link = card.querySelector('.primary-link');
+            const href = link ? link.getAttribute('href') : '';
+            return href === 'http://sys-sf-nm1.arvika.xnse.com:8080/'
+                || href === 'http://sys-sf-nm1.arvika.xnse.com:8123/';
+        });
         const clickCounts = loadClickCounts();
 
         uiSound.preload = 'auto';
@@ -783,12 +786,8 @@
                 playUiSound(true);
             });
 
-            trigger.addEventListener('focus', () => {
+            trigger.addEventListener('focusin', () => {
                 playUiSound(true);
-            });
-
-            trigger.addEventListener('click', () => {
-                playUiSound();
             });
         });
     </script>
