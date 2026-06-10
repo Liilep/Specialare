@@ -369,6 +369,20 @@
             white-space: nowrap;
         }
 
+        .program-meta-copy {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .program-clicks {
+            color: #64748b;
+            font-size: 0.72rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
         .primary-link {
             display: inline-flex;
             align-items: center;
@@ -662,9 +676,20 @@
     </div>
 
     <script>
+        const uiSound = new Audio('Spick.m4a');
+        const clickCountStorageKey = 'specialare.programClickCounts.v1';
+        const uiSoundCooldownMs = 250;
+        let uiSoundLastPlayedAt = 0;
         const searchInput = document.getElementById('searchInput');
         const cards = Array.from(document.querySelectorAll('.program-card'));
         const emptyState = document.getElementById('emptyState');
+        const soundTriggers = Array.from(document.querySelectorAll(
+            'a[href="http://sys-sf-nm1.arvika.xnse.com:8080/"], a[href="http://sys-sf-nm1.arvika.xnse.com:8123/"]'
+        ));
+        const clickCounts = loadClickCounts();
+
+        uiSound.preload = 'auto';
+        initializeClickCounters();
 
         searchInput.addEventListener('input', () => {
             const query = searchInput.value.trim().toLowerCase();
@@ -678,6 +703,93 @@
             });
 
             emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+        });
+
+        function playUiSound(enforceCooldown = false) {
+            const now = Date.now();
+            if (enforceCooldown && now - uiSoundLastPlayedAt < uiSoundCooldownMs) {
+                return;
+            }
+
+            uiSoundLastPlayedAt = now;
+            uiSound.pause();
+            uiSound.currentTime = 0;
+
+            const playAttempt = uiSound.play();
+            if (playAttempt && typeof playAttempt.catch === 'function') {
+                playAttempt.catch(() => {});
+            }
+        }
+
+        function loadClickCounts() {
+            try {
+                const stored = window.localStorage.getItem(clickCountStorageKey);
+                return stored ? JSON.parse(stored) : {};
+            } catch (error) {
+                return {};
+            }
+        }
+
+        function saveClickCounts() {
+            try {
+                window.localStorage.setItem(clickCountStorageKey, JSON.stringify(clickCounts));
+            } catch (error) {}
+        }
+
+        function createProgramKey(card, link, index) {
+            return link.getAttribute('href')
+                || card.querySelector('.program-title')?.textContent.trim()
+                || `program-${index}`;
+        }
+
+        function formatClickCount(count) {
+            return `${count} klick`;
+        }
+
+        function initializeClickCounters() {
+            cards.forEach((card, index) => {
+                const meta = card.querySelector('.program-meta');
+                const urlElement = card.querySelector('.program-url');
+                const link = card.querySelector('.primary-link');
+
+                if (!meta || !urlElement || !link) {
+                    return;
+                }
+
+                const info = document.createElement('div');
+                info.className = 'program-meta-copy';
+                meta.insertBefore(info, urlElement);
+                info.appendChild(urlElement);
+
+                const counter = document.createElement('span');
+                counter.className = 'program-clicks';
+                info.appendChild(counter);
+
+                const programKey = createProgramKey(card, link, index);
+                const currentCount = Number(clickCounts[programKey] || 0);
+                counter.textContent = formatClickCount(currentCount);
+
+                link.addEventListener('click', () => {
+                    const nextCount = Number(clickCounts[programKey] || 0) + 1;
+                    clickCounts[programKey] = nextCount;
+                    counter.textContent = formatClickCount(nextCount);
+                    saveClickCounts();
+                });
+            });
+        }
+
+        soundTriggers.forEach((trigger) => {
+            trigger.addEventListener('mouseenter', () => {
+                playUiSound(true);
+            });
+
+            trigger.addEventListener('focus', () => {
+                playUiSound(true);
+            });
+
+            trigger.addEventListener('click', () => {
+                playUiSound();
+            });
         });
     </script>
 </body>
